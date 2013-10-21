@@ -10,6 +10,8 @@ public class FileManager {
 		StringBuilder sb = new StringBuilder();
 		File file = new File (filename);
 		exists(filename);
+		//System.out.println(file.getParent());
+		
 		try {
 		
 		BufferedReader in = new BufferedReader(new FileReader(file.getAbsoluteFile()));
@@ -37,7 +39,24 @@ public class FileManager {
 		return date;
 	}
 	
-	public static void write () {
+	public static void write (String fileName, String text) {
+		
+		    File file = new File(fileName);
+		 
+		    try {
+		        if(!file.exists()){
+		            file.createNewFile();
+		        }
+		        PrintWriter out = new PrintWriter(file.getAbsoluteFile());
+		 
+		        try {
+		            out.print(text);
+		        } finally {
+		            out.close();
+		        }
+		    } catch(IOException e) {
+		        throw new RuntimeException(e);
+		    }
 		
 	}
 	

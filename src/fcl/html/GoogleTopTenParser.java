@@ -2,6 +2,7 @@ package fcl.html;
 
 import java.io.FileNotFoundException;
 import java.net.*;
+//import java.nio.file.*;
 import java.util.*;
 
 import org.htmlcleaner.*;
@@ -15,6 +16,12 @@ public class GoogleTopTenParser {
 	private static String fileName5 = "apple-Google.html";
 
 	public static void main(String[] args) throws FileNotFoundException, URISyntaxException  {
+		/*Path paths = ; TODO relative path
+		System.out.println(paths);*/
+		if (args.length > 0) {
+			path = args[0];
+		}
+		
 		List <List <TopSite>> topsites = new ArrayList <List <TopSite>> ();
 		topsites.add(parse(path + fileName));
 		topsites.add(parse(path + fileName2));
@@ -22,19 +29,21 @@ public class GoogleTopTenParser {
 		topsites.add(parse(path + fileName4));
 		topsites.add(parse(path + fileName5));
 		System.out.println(topsites);
+		
+		FileManager.write("target/parseResult" + ".txt", topsites.toString());
+		System.out.println();
 	}
 	
 	private static List<TopSite> parse(String filepath) throws FileNotFoundException, URISyntaxException {
 		String htmlFromFile = FileManager.read(filepath);
 		Date date = FileManager.getDate(filepath);
 		List <TopSite> topsites = new ArrayList<TopSite>();
+		
 		System.out.println(date);
 		
 		HtmlCleaner cleaner = new HtmlCleaner();
 		TagNode node = cleaner.clean(htmlFromFile);
-		//find <h3 class="r">
-		TagNode[] r;
-		r = node.getElementsByAttValue("class", "r", true, false); 
+		TagNode[] r = node.getElementsByAttValue("class", "r", true, false); //find <h3 class="r">
 		int counter = 0;
 		for (int i=0; i < r.length; i++) {
 			TagNode a = r[i].findElementByName("a", true);
