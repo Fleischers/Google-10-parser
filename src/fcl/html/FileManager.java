@@ -1,6 +1,7 @@
 package fcl.html;
 
 import java.io.*;
+import java.util.Date;
 
 public class FileManager {
 
@@ -27,6 +28,17 @@ public class FileManager {
 		
 		
 		return sb.toString();
+	}
+	
+	public static Date getDate (String filename) {
+		File file = new File (filename);
+		file.exists();
+		Date date = new Date(file.lastModified());
+		return date;
+	}
+	
+	public static void write () {
+		
 	}
 	
 	private static void exists (String filename) throws FileNotFoundException {

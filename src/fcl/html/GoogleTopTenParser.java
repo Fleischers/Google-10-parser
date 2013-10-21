@@ -1,9 +1,8 @@
 package fcl.html;
 
 import java.io.FileNotFoundException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
+import java.net.*;
+import java.util.*;
 
 import org.htmlcleaner.*;
 
@@ -13,44 +12,65 @@ public class GoogleTopTenParser {
 	private static String fileName2 = "java2Google.html";
 	private static String fileName3 = "GorlifSense-Google.html";
 	private static String fileName4 = "Jexer-Google.html";
+	private static String fileName5 = "apple-Google.html";
 
-	public static void main(String[] args) throws FileNotFoundException, URISyntaxException {
-		String htmlFromFile = FileManager.read(path + fileName4);
-		//System.out.println(htmlFromFile);
+	public static void main(String[] args) throws FileNotFoundException, URISyntaxException  {
+		List <List <TopSite>> topsites = new ArrayList <List <TopSite>> ();
+		topsites.add(parse(path + fileName));
+		topsites.add(parse(path + fileName2));
+		topsites.add(parse(path + fileName3));
+		topsites.add(parse(path + fileName4));
+		topsites.add(parse(path + fileName5));
+		System.out.println(topsites);
+	}
+	
+	private static List<TopSite> parse(String filepath) throws FileNotFoundException, URISyntaxException {
+		String htmlFromFile = FileManager.read(filepath);
+		Date date = FileManager.getDate(filepath);
+		List <TopSite> topsites = new ArrayList<TopSite>();
+		System.out.println(date);
 		
 		HtmlCleaner cleaner = new HtmlCleaner();
 		TagNode node = cleaner.clean(htmlFromFile);
 		//find <h3 class="r">
 		TagNode[] r;
 		r = node.getElementsByAttValue("class", "r", true, false); 
-		
-		StringBuilder domains = new StringBuilder();
 		int counter = 0;
 		for (int i=0; i < r.length; i++) {
-			
-			List <?> elements = r[i].getAllElementsList(true);
-			System.out.println(elements);
 			TagNode a = r[i].findElementByName("a", true);
 			if (!a.hasAttribute("class")) {
 				counter++;
 				String site = a.getAttributeByName("href");
-				domains.append(counter + " " + findDomain(site) + "\n");
+				topsites.add(new TopSite (counter, findDomain(site), date));
+				
 			}
 		}
-		System.out.println(domains);
-		
+		return topsites;
 	}
-	
-	static String findDomain(String url) throws URISyntaxException {
+
+	private static String findDomain(String url) throws URISyntaxException {
 		URI uri = new URI(url);
 		String domain = uri.getHost();
 		if (domain.contains("google")) {
 			//TODO google url GET resend
-			domain = uri.getQuery();
+			if (uri.getPath().contains("url") ) {
+				domain = uri.getQuery();
+				
+				if (domain.contains("&")) {
+					String[] tokens = domain.split("&");
+					for (String t: tokens) {
+						if (t.contains("url=")) {
+							URI guri = new URI (t.substring(4));
+							domain = guri.getHost();
+							break;
+						}
+					}
+				}
+			}
 		}
-		if (domain.startsWith("www.")) {
+		/*if (domain.startsWith("www.")) {
 			domain = domain.substring(4);
-		}
+		}*/
 		return domain;
 	}
 
