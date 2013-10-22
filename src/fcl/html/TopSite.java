@@ -3,9 +3,9 @@ package fcl.html;
 import java.util.Date;
 
 public class TopSite {
-	private int position;
+	int position;
 	private String domain;
-	private Date date;
+	Date date;
 	
 	TopSite (int pos, String dom, Date dat) {
 		position = pos;

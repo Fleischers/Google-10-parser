@@ -2,47 +2,40 @@ package fcl.html;
 
 import java.io.*;
 import java.net.*;
+import java.security.AccessController;
 //import java.nio.file.*;
 import java.util.*;
 
 import org.htmlcleaner.*;
 
+import sun.security.action.GetPropertyAction;
+
 public class GoogleTopTenParser {
-	private static String path = "/home/fleischer/workspace/Google-10-parser/resources/";
 	private static String fileName = "java-Google.html";
-	private static String fileName2 = "java2Google.html";
-	private static String fileName3 = "GorlifSense-Google.html";
-	private static String fileName4 = "Jexer-Google.html";
-	private static String fileName5 = "apple-Google.html";
+	private static String path = "/home/fleischer/workspace/Google-10-parser/resources/" + fileName;
 	
-	private static List <List <TopSite>> topsites = new ArrayList <List <TopSite>> ();
-//	private static List <TopSite> topsites = new ArrayList <TopSite> ();
+	final static char SLASH = AccessController.doPrivileged(new GetPropertyAction("file.separator")).charAt(0);
+
+
+	private static List <TopSite> topsites = new ArrayList <TopSite> ();
 
 	public static void main(String[] args) throws FileNotFoundException, URISyntaxException  {
-		/*Path paths = ; TODO relative path
-		System.out.println(paths);*/
 		if (args.length > 0) {
 			path = args[0];
 		}
-		File folder = new File(path);
-		topsites = listFilesInFolder(folder);
-//		topsites = parse(path);
+		topsites = parse(path);
 		
-//		StringBuilder sb = new StringBuilder();
-//		for (TopSite itr: topsites) {
-//			System.out.println(itr);
-//			
-//		}
-		FileManager.write("target/parseResult" + ".txt", topsites.toString());
+		StringBuilder sb = new StringBuilder();
 		
-		//TODO delelte
-//		List <List <TopSite>> topsites2 = new ArrayList <List <TopSite>> ();
-//		topsites2.add(parse(path + fileName));
-//		topsites2.add(parse(path + fileName2));
-//		topsites2.add(parse(path + fileName3));
-//		topsites2.add(parse(path + fileName4));
-//		topsites2.add(parse(path + fileName5));
-//		System.out.println(topsites2);
+		for (TopSite itr: topsites) {
+			System.out.print(itr);
+			sb.append(itr);
+		}
+		String name = new String();
+		String[] folders = path.split(String.valueOf(SLASH));
+		name = folders[folders.length-1];
+		
+		FileManager.write("target" + SLASH + name + ".txt", sb.toString());
 		
 	}
 	
@@ -69,7 +62,6 @@ public class GoogleTopTenParser {
 			} else {
 				System.out.println("I am here, and I (" + notBeenHere + ") here so many times " + notBeenHereCounter++ );
 				if (notBeenHere) {
-					//TagNode[] aClassNode = r;
 					List <TagNode> aClassNode = new ArrayList <TagNode> ();
 					int tempI = i;
 					int aCounter = 0;
@@ -77,7 +69,6 @@ public class GoogleTopTenParser {
 						aClassNode.add(r[tempI].findElementByName("a", true));
 						System.out.print("[tempI] tempI: " + tempI + " ");
 						System.out.println("[contains] " + aClassNode.get(aCounter) + " " + aClassNode.get(aCounter).getAttributeByName("href"));
-						//aClassNode[tempI].findElementByAttValue("a", "href", true, false);
 						tempI++;
 					} while (aClassNode.get(aCounter++).hasAttribute("class"));
 					int aClassL = aClassNode.size() /2;
@@ -108,7 +99,6 @@ public class GoogleTopTenParser {
 		URI uri = new URI(url);
 		String domain = uri.getHost();
 		if (domain.contains("google")) {
-			//TODO google url GET resend
 			if (uri.getPath().contains("url") ) {
 				domain = uri.getQuery();
 				
@@ -139,8 +129,7 @@ public class GoogleTopTenParser {
 	            System.out.println(fileEntry.getName());
 	            String pathF = fileEntry.getPath();
 	            
-	    		topsites.add(parse(pathF));   //TODO uncomment
-	    		System.out.println (parse(pathF)); //TODO delete this
+	    		topsites.add(parse(pathF));   
 	        }
 	    }
 	    return topsites;

@@ -40,9 +40,7 @@ public class FileManager {
 	}
 	
 	public static void write (String fileName, String text) {
-		
 		    File file = new File(fileName);
-		 
 		    try {
 		        if(!file.exists()){
 		            file.createNewFile();
@@ -57,7 +55,6 @@ public class FileManager {
 		    } catch(IOException e) {
 		        throw new RuntimeException(e);
 		    }
-		
 	}
 	
 	private static void exists (String filename) throws FileNotFoundException {
