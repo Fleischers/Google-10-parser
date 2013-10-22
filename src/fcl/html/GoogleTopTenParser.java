@@ -16,6 +16,7 @@ public class GoogleTopTenParser {
 	private static String fileName5 = "apple-Google.html";
 	
 	private static List <List <TopSite>> topsites = new ArrayList <List <TopSite>> ();
+//	private static List <TopSite> topsites = new ArrayList <TopSite> ();
 
 	public static void main(String[] args) throws FileNotFoundException, URISyntaxException  {
 		/*Path paths = ; TODO relative path
@@ -25,45 +26,79 @@ public class GoogleTopTenParser {
 		}
 		File folder = new File(path);
 		topsites = listFilesInFolder(folder);
+//		topsites = parse(path);
+		
+//		StringBuilder sb = new StringBuilder();
+//		for (TopSite itr: topsites) {
+//			System.out.println(itr);
+//			
+//		}
 		FileManager.write("target/parseResult" + ".txt", topsites.toString());
 		
 		//TODO delelte
-		List <List <TopSite>> topsites2 = new ArrayList <List <TopSite>> ();
-		topsites2.add(parse(path + fileName));
-		topsites2.add(parse(path + fileName2));
-		topsites2.add(parse(path + fileName3));
-		topsites2.add(parse(path + fileName4));
-		topsites2.add(parse(path + fileName5));
-		//System.out.println(topsites);
+//		List <List <TopSite>> topsites2 = new ArrayList <List <TopSite>> ();
+//		topsites2.add(parse(path + fileName));
+//		topsites2.add(parse(path + fileName2));
+//		topsites2.add(parse(path + fileName3));
+//		topsites2.add(parse(path + fileName4));
+//		topsites2.add(parse(path + fileName5));
+//		System.out.println(topsites2);
 		
 	}
 	
 	private static List<TopSite> parse(String filepath) throws FileNotFoundException, URISyntaxException {
 		String htmlFromFile = FileManager.read(filepath);
 		Date date = FileManager.getDate(filepath);
-		List <TopSite> topsites = new ArrayList<TopSite>();
-		
-		System.out.println(date);
-		
+		List <TopSite> topsites = new ArrayList<TopSite>();		
 		HtmlCleaner cleaner = new HtmlCleaner();
 		TagNode node = cleaner.clean(htmlFromFile);
 		TagNode[] r = node.getElementsByAttValue("class", "r", true, false); //find <h3 class="r">
 		int counter = 0;
-		int aClassL = 3;
+		boolean notBeenHere = true;
+		int notBeenHereCounter = 0;
 		for (int i=0; i < r.length; i++) {
-			TagNode a = r[i].findElementByName("a", true);
-			if (!a.hasAttribute("class")) {
+			TagNode ahref = r[i].findElementByName("a", true);
+			if (!ahref.hasAttribute("class")) {
 				counter++;
-				String site = a.getAttributeByName("href");
+				String site = ahref.getAttributeByName("href");
 				topsites.add(new TopSite (counter, findDomain(site), date));
+				System.out.println("[a] i: " + i);
+				System.out.println(topsites.get(counter-1));
+				
 				
 			} else {
-				if (aClassL > 0) {
-					aClassL--;
-					counter++;
-					String site = a.getAttributeByName("href");
-					topsites.add(new TopSite (counter, findDomain(site), date));
+				System.out.println("I am here, and I (" + notBeenHere + ") here so many times " + notBeenHereCounter++ );
+				if (notBeenHere) {
+					//TagNode[] aClassNode = r;
+					List <TagNode> aClassNode = new ArrayList <TagNode> ();
+					int tempI = i;
+					int aCounter = 0;
+					do {
+						aClassNode.add(r[tempI].findElementByName("a", true));
+						System.out.print("[tempI] tempI: " + tempI + " ");
+						System.out.println("[contains] " + aClassNode.get(aCounter) + " " + aClassNode.get(aCounter).getAttributeByName("href"));
+						//aClassNode[tempI].findElementByAttValue("a", "href", true, false);
+						tempI++;
+					} while (aClassNode.get(aCounter++).hasAttribute("class"));
+					int aClassL = aClassNode.size() /2;
+					TagNode aL;
+					System.out.println("[aClass] size: " + aClassNode.size());
+					i = tempI-2;
+					tempI = 0;
+					System.out.println("[aL final] i: " + i);
+					System.out.println("aClassL: " + aClassL);
+					while (aClassL > 0) {
+						aClassL--;
+						System.out.println("aClassL inside: " + aClassL);
+						counter++;
+						aL = aClassNode.get(tempI++);
+						String site = aL.getAttributeByName("href");
+						topsites.add(new TopSite (counter, findDomain(site), date));
+						System.out.println(topsites.get(counter-1));
+					}
+					notBeenHere = false;
 				}
+				
 			}
 		}
 		return topsites;
@@ -104,7 +139,7 @@ public class GoogleTopTenParser {
 	            System.out.println(fileEntry.getName());
 	            String pathF = fileEntry.getPath();
 	            
-	    		topsites.add(parse(pathF));
+	    		topsites.add(parse(pathF));   //TODO uncomment
 	    		System.out.println (parse(pathF)); //TODO delete this
 	        }
 	    }

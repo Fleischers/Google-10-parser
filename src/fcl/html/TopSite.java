@@ -15,7 +15,7 @@ public class TopSite {
 	
 	@Override
 	public String toString () {
-		return position + " " + domain + " - " + date + "\n";
+		return domain + "\n";
 	}
 
 }
