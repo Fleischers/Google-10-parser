@@ -13,12 +13,12 @@ import java.security.AccessController;
 import sun.security.action.GetPropertyAction;
 
 public class GoogleTopTenParser {
-	private static String fileName = "java-Google.html";
-	private static String path = "/home/fleischer/workspace/Google-10-parser/resources/" + fileName;
-	
+	//TODO delete fileName and path variables
+	//private static String fileName = "1.html";
+	//private static String path = "/home/fleischer/workspace/Google-10-parser/resources/" + fileName;
+	//~==
+	private static String path;
 	final static char SLASH = AccessController.doPrivileged(new GetPropertyAction("file.separator")).charAt(0);
-
-
 	private static List <TopSite> topsites = new ArrayList <TopSite> ();
 
 	public static void main(String[] args) throws FileNotFoundException, URISyntaxException  {
@@ -39,8 +39,8 @@ public class GoogleTopTenParser {
 		name = folders[folders.length-1];
 		result = sb.toString();
 		if (result.isEmpty() || !name.contains("html")) {
-			System.out.print ("[HTML Warning] Only valid html files is accepted");
-			System.out.println(" - resulting filename is marked with [XHTMLwarning]");
+			System.err.print ("[HTML Warning] Only valid html files is accepted");
+			System.err.println(" - resulting filename is marked with [XHTMLwarning]");
 			name = "[HTMLwarning]" + name;
 		}
 		FileManager.folderExists("target");
@@ -54,7 +54,8 @@ public class GoogleTopTenParser {
 		List <TopSite> topsites = new ArrayList<TopSite>();		
 		HtmlCleaner cleaner = new HtmlCleaner();
 		TagNode node = cleaner.clean(htmlFromFile);
-		TagNode[] r = node.getElementsByAttValue("class", "r", true, false); //find <h3 class="r">
+		//find <h3 class="r">
+		TagNode[] r = node.getElementsByAttValue("class", "r", true, false);
 		int counter = 0;
 		boolean notBeenHere = true;
 		for (int i=0; i < r.length; i++) {
