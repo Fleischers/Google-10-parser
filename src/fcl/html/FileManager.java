@@ -9,9 +9,7 @@ public class FileManager {
 	public static String read (String filename) throws FileNotFoundException {
 		StringBuilder sb = new StringBuilder();
 		File file = new File (filename);
-		exists(filename);
-		//System.out.println(file.getParent());
-		
+		exists(filename);		
 		try {
 		
 		BufferedReader in = new BufferedReader(new FileReader(file.getAbsoluteFile()));
@@ -27,8 +25,6 @@ public class FileManager {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		
-		
 		return sb.toString();
 	}
 	
@@ -55,6 +51,13 @@ public class FileManager {
 		    } catch(IOException e) {
 		        throw new RuntimeException(e);
 		    }
+	}
+	
+	public static void folderExists (String name) {
+		File folder = new File (name);
+			if (!folder.exists()) {
+				folder.mkdir();
+			}
 	}
 	
 	private static void exists (String filename) throws FileNotFoundException {

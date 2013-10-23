@@ -1,13 +1,15 @@
 package fcl.html;
+/*
+ * @version v1.1.*
+*/
 
 import java.io.*;
 import java.net.*;
-import java.security.AccessController;
-//import java.nio.file.*;
 import java.util.*;
 
 import org.htmlcleaner.*;
 
+import java.security.AccessController;
 import sun.security.action.GetPropertyAction;
 
 public class GoogleTopTenParser {
@@ -26,6 +28,7 @@ public class GoogleTopTenParser {
 		topsites = parse(path);
 		
 		StringBuilder sb = new StringBuilder();
+		String result;
 		
 		for (TopSite itr: topsites) {
 			System.out.print(itr);
@@ -34,8 +37,14 @@ public class GoogleTopTenParser {
 		String name = new String();
 		String[] folders = path.split(String.valueOf(SLASH));
 		name = folders[folders.length-1];
-		
-		FileManager.write("target" + SLASH + name + ".txt", sb.toString());
+		result = sb.toString();
+		if (result.isEmpty() || !name.contains("html")) {
+			System.out.print ("[HTML Warning] Only valid html files is accepted");
+			System.out.println(" - resulting filename is marked with [XHTMLwarning]");
+			name = "[HTMLwarning]" + name;
+		}
+		FileManager.folderExists("target");
+		FileManager.write("target" + SLASH + name + ".txt", result);
 		
 	}
 	
@@ -48,44 +57,31 @@ public class GoogleTopTenParser {
 		TagNode[] r = node.getElementsByAttValue("class", "r", true, false); //find <h3 class="r">
 		int counter = 0;
 		boolean notBeenHere = true;
-		int notBeenHereCounter = 0;
 		for (int i=0; i < r.length; i++) {
 			TagNode ahref = r[i].findElementByName("a", true);
 			if (!ahref.hasAttribute("class")) {
 				counter++;
 				String site = ahref.getAttributeByName("href");
 				topsites.add(new TopSite (counter, findDomain(site), date));
-				System.out.println("[a] i: " + i);
-				System.out.println(topsites.get(counter-1));
-				
-				
 			} else {
-				System.out.println("I am here, and I (" + notBeenHere + ") here so many times " + notBeenHereCounter++ );
 				if (notBeenHere) {
 					List <TagNode> aClassNode = new ArrayList <TagNode> ();
 					int tempI = i;
 					int aCounter = 0;
 					do {
 						aClassNode.add(r[tempI].findElementByName("a", true));
-						System.out.print("[tempI] tempI: " + tempI + " ");
-						System.out.println("[contains] " + aClassNode.get(aCounter) + " " + aClassNode.get(aCounter).getAttributeByName("href"));
 						tempI++;
 					} while (aClassNode.get(aCounter++).hasAttribute("class"));
 					int aClassL = aClassNode.size() /2;
 					TagNode aL;
-					System.out.println("[aClass] size: " + aClassNode.size());
 					i = tempI-2;
 					tempI = 0;
-					System.out.println("[aL final] i: " + i);
-					System.out.println("aClassL: " + aClassL);
 					while (aClassL > 0) {
 						aClassL--;
-						System.out.println("aClassL inside: " + aClassL);
 						counter++;
 						aL = aClassNode.get(tempI++);
 						String site = aL.getAttributeByName("href");
 						topsites.add(new TopSite (counter, findDomain(site), date));
-						System.out.println(topsites.get(counter-1));
 					}
 					notBeenHere = false;
 				}
@@ -120,6 +116,8 @@ public class GoogleTopTenParser {
 		return domain;
 	}
 	
+	//TODO delete deprecated
+	@Deprecated
 	public static List<List <TopSite>> listFilesInFolder(File folder) throws FileNotFoundException, URISyntaxException {
 		List <List <TopSite>> topsites = new ArrayList <List <TopSite>> ();
 	    for (File fileEntry : folder.listFiles()) {
@@ -134,5 +132,5 @@ public class GoogleTopTenParser {
 	    }
 	    return topsites;
 	}
-
+	 
 }
