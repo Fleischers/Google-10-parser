@@ -1,7 +1,17 @@
 Google-10-parser
 ================
 
-Simple application to get domains list from Google top 10 html file
+Simple application to get domains list from Google top 10 html file.
+
+<h4>Instructions:</h4>
+
+1. Save your Google search result as html file
+2. Run java -jar Google-10-parser <your HTML file>
+3. Get results from target/yourHTMLfile.html.txt
+4. ???
+5. PROFIT!
+
+<h4>Version history:</h4>
 
 <b>v0.1.0-alpha:</b><br/>
 Changed logic to get single file path from args 
