@@ -13,10 +13,6 @@ import java.security.AccessController;
 import sun.security.action.GetPropertyAction;
 
 public class GoogleTopTenParser {
-	//TODO delete fileName and path variables
-	//private static String fileName = "1.html";
-	//private static String path = "/home/fleischer/workspace/Google-10-parser/resources/" + fileName;
-	//~==
 	private static String path;
 	final static char SLASH = AccessController.doPrivileged(new GetPropertyAction("file.separator")).charAt(0);
 	private static List <TopSite> topsites = new ArrayList <TopSite> ();
@@ -73,14 +69,19 @@ public class GoogleTopTenParser {
 						aClassNode.add(r[tempI].findElementByName("a", true));
 						tempI++;
 					} while (aClassNode.get(aCounter++).hasAttribute("class"));
-					int aClassL = aClassNode.size() /2;
+					int aClassL = aClassNode.size() - 1;
 					TagNode aL;
 					i = tempI-2;
 					tempI = 0;
 					while (aClassL > 0) {
 						aClassL--;
 						counter++;
-						aL = aClassNode.get(tempI++);
+						aL = aClassNode.get(tempI);
+						if (tempI + 2 > aClassNode.size()) {
+							break;
+						} else {
+							tempI+=2;
+						}
 						String site = aL.getAttributeByName("href");
 						topsites.add(new TopSite (counter, findDomain(site), date));
 					}
