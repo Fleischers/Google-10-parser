@@ -117,22 +117,4 @@ public class GoogleTopTenParser {
 		}*/
 		return domain;
 	}
-	
-	//TODO delete deprecated
-	@Deprecated
-	public static List<List <TopSite>> listFilesInFolder(File folder) throws FileNotFoundException, URISyntaxException {
-		List <List <TopSite>> topsites = new ArrayList <List <TopSite>> ();
-	    for (File fileEntry : folder.listFiles()) {
-	        if (fileEntry.isDirectory()) {
-	            listFilesInFolder(fileEntry);
-	        } else {
-	            System.out.println(fileEntry.getName());
-	            String pathF = fileEntry.getPath();
-	            
-	    		topsites.add(parse(pathF));   
-	        }
-	    }
-	    return topsites;
-	}
-	 
 }
