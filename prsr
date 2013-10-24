@@ -1,7 +1,32 @@
 #!/bin/bash
-echo Google-10-parser
-parametr1=$1
+param1=$1
+param2=$2
 script_name=$0
-echo "Скрипт $script_name и параметр $parametr1 за $PWD" 
-java -jar target/Google-10-parser-v0.1.2-alpha.jar resources/*
+echo "Скрипт $script_name в $PWD"
+
+javac -sourcepath src -d bin -classpath lib/htmlcleaner-2.6.1.jar src/fcl/html/GoogleTopTenParser.java
+
+case $param1 in
+-f)
+java -classpath bin:lib/htmlcleaner-2.6.1.jar fcl.html.GoogleTopTenParser $param2
+;;
+-all)
+ls $param2 ;;
+*)
+echo "type commands [-commands] [parameters]
+-f: [path to file] - parse single file
+-all: [path to directory] - parse all files in folder"
+esac
+
+
+#
+#if [[ "$param1" -eq "$commandF" ]]
+#then 
+
+#else
+#echo "Ошибка"
+#exit 1
+#fi 
+
 exit 0 
+#!bash exit
