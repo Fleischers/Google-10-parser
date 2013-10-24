@@ -1,0 +1,7 @@
+#!/bin/bash
+echo Google-10-parser
+parametr1=$1
+script_name=$0
+echo "Скрипт $script_name и параметр $parametr1 за $PWD" 
+java -jar target/Google-10-parser-v0.1.2-alpha.jar resources/*
+exit 0 
