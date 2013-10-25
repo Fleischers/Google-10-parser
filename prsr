@@ -2,7 +2,7 @@
 param1=$1
 param2=$2
 script_name=$0
-echo "Скрипт $script_name в $PWD"
+#echo "Скрипт $script_name в $PWD"
 
 javac -sourcepath src -d bin -classpath lib/htmlcleaner-2.6.1.jar src/fcl/html/GoogleTopTenParser.java
 
@@ -11,22 +11,19 @@ case $param1 in
 java -classpath bin:lib/htmlcleaner-2.6.1.jar fcl.html.GoogleTopTenParser $param2
 ;;
 -all)
-ls $param2 ;;
+folder=`ls $param2`
+for files in $folder
+do
+echo "$files"
+java -classpath bin:lib/htmlcleaner-2.6.1.jar fcl.html.GoogleTopTenParser $param2/$files
+echo
+done
+;;
 *)
 echo "type commands [-commands] [parameters]
 -f: [path to file] - parse single file
 -all: [path to directory] - parse all files in folder"
 esac
-
-
-#
-#if [[ "$param1" -eq "$commandF" ]]
-#then 
-
-#else
-#echo "Ошибка"
-#exit 1
-#fi 
 
 exit 0 
 #!bash exit

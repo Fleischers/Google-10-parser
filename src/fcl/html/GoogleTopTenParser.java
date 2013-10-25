@@ -9,12 +9,12 @@ import java.util.*;
 
 import org.htmlcleaner.*;
 
-import java.security.AccessController;
-import sun.security.action.GetPropertyAction;
+//import java.security.AccessController;
+//import sun.security.action.GetPropertyAction;
 
 public class GoogleTopTenParser {
 	private static String path;
-	final static char SLASH = AccessController.doPrivileged(new GetPropertyAction("file.separator")).charAt(0);
+//	final static char SLASH = AccessController.doPrivileged(new GetPropertyAction("file.separator")).charAt(0);
 	private static List <TopSite> topsites = new ArrayList <TopSite> ();
 
 	public static void main(String[] args) throws FileNotFoundException, URISyntaxException  {
@@ -31,7 +31,7 @@ public class GoogleTopTenParser {
 			sb.append(itr);
 		}
 		String name = new String();
-		String[] folders = path.split(String.valueOf(SLASH));
+		String[] folders = path.split("/"); //String.valueOf(SLASH)
 		name = folders[folders.length-1];
 		result = sb.toString();
 		if (result.isEmpty() || !name.contains("html")) {
@@ -40,8 +40,8 @@ public class GoogleTopTenParser {
 			name = "[HTMLwarning]" + name;
 		}
 		FileManager.folderExists("target");
-		FileManager.write("target" + SLASH + name + ".txt", result);
-		
+		FileManager.write("target/" /*+ SLASH*/ + name + ".txt", result);
+		//TODO delete SLASH and AccessController libs
 	}
 	
 	private static List<TopSite> parse(String filepath) throws FileNotFoundException, URISyntaxException {
