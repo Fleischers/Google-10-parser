@@ -1,29 +1,62 @@
 #!/bin/bash
 param1=$1
-param2=$2
-script_name=$0
-#echo "Скрипт $script_name в $PWD"
+if [ -e $2 ]
+then read str
+else param2=$1
+fi
 
+file1="./target/parseResult.txt"
+file2="./target/standartResult.txt"
 javac -sourcepath src -d bin -classpath lib/htmlcleaner-2.6.1.jar src/fcl/html/GoogleTopTenParser.java
+
+testParse() {
+diff -y -s $file1 $file2;
+lines=`cat $file1 | wc -l`
+test $lines -le 10 || echo "[Parser warning] More then 10 results";
+test $lines -gt 7 || echo "[Parser warning] Less then 7 results";
+}
 
 case $param1 in
 -f)
-java -classpath bin:lib/htmlcleaner-2.6.1.jar fcl.html.GoogleTopTenParser $param2
+java -classpath bin:lib/htmlcleaner-2.6.1.jar fcl.html.GoogleTopTenParser $param2 > $file1
+testParse
 ;;
 -all)
 folder=`ls $param2`
 for files in $folder
 do
 echo "$files"
-java -classpath bin:lib/htmlcleaner-2.6.1.jar fcl.html.GoogleTopTenParser $param2/$files
+java -classpath bin:lib/htmlcleaner-2.6.1.jar fcl.html.GoogleTopTenParser $param2/$files > $file1
+testParse
 echo
 done
 ;;
+-files)
+parameters=${@#-files}
+for files in $parameters
+do
+echo "$files"
+java -classpath bin:lib/htmlcleaner-2.6.1.jar fcl.html.GoogleTopTenParser $files > $file1
+testParse
+echo
+done
+;;
+-s)
+: > $file1
+parameters=${@#-s}
+for strings in $parameters
+do
+echo $strings >> $file1
+done
+testParse
+;;
 *)
-echo "type commands [-commands] [parameters]
+echo "type commands [-command] [parameters]
 -f: [path to file] - parse single file
 -all: [path to directory] - parse all files in folder"
+echo "-files: [path to file1, file2, file3 ... fileN] - parse selected files"
+echo "-s: [string] - parse String"
 esac
 
 exit 0 
-#!bash exit
+#!/bin/bash/exit
